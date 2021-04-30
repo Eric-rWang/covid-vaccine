@@ -51,14 +51,9 @@ def add_job(task, time, status="submitted"):
 def update_job_status(jid, worker_ip, new_status):
     """Update the status of job with job id `jid` to status `status`."""
     jid, time, status, task = rd.hmget(_generate_job_key(jid), 'id', 'time', 'status', 'task')
-    print(task, type(task))
 
     if new_status == "in progress":
-        print('test2')
-        if task == b'jobs':
-            return_jobs()
-        elif task == b'load_data':
-            print('test3')
+        if task == b'load_data':
             load_data()
 
     print('test4')
@@ -72,10 +67,19 @@ def update_job_status(jid, worker_ip, new_status):
 
 def return_jobs():
     keys = rd.keys()
-    jobs = []
+    jobs = {"jobs":[]}
+
     for key in keys:
         key = key.decode("utf-8")
-        jobs.append(rd.hgetall(key))
+        jid, time, status, task, pod_ip = rd.hmget(key, 'id', 'time', 'status', 'task', 'pod_ip')
+
+        jobs["jobs"].append({
+            'id': jid.decode('utf-8'),
+            'time': time.decode('utf-8'),
+            'status': status.decode('utf-8'),
+            'task': task.decode('utf-8'),
+            'pod_ip': pod_ip.decode('utf-8')
+        })
 
     return jobs
 
@@ -90,11 +94,13 @@ def load_data():
             data['vaccine_data'].append({
                 'location': str(line[0]),
                 'date': str(line[1]),
-                'vaccinated': int(line[2])
+                'vaccinated': float(line[2])
             })
         
         r2.set('vaccine_data', json.dumps(data, indent = 2))
 
+def view_data():
+    return json.loads(r2.get('vaccine_data'))
 
 
 

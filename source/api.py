@@ -14,11 +14,15 @@ def jobs_api():
 #        job = request.get_json(force=True)
 #    except Exception as e:
 #        return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
-    return json.dumps(jobs.add_job('jobs', now_time))
+    return json.dumps(jobs.return_jobs(), indent=2) + '\n'
+
+@app.route('/view_data', methods=['GET'])
+def print_data():
+    return json.dumps(jobs.view_data(), indent=2) + '\n'
 
 @app.route('/load_data', methods=['GET'])
 def load_data_api():
-	return json.dumps(jobs.add_job('load_data', now_time))
+	return json.dumps(jobs.add_job('load_data', now_time), indent=2) + '\n'
 
 
 if __name__ == '__main__':
