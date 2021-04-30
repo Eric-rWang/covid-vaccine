@@ -52,13 +52,12 @@ def update_job_status(jid, worker_ip, new_status):
     """Update the status of job with job id `jid` to status `status`."""
     jid, time, status, task = rd.hmget(_generate_job_key(jid), 'id', 'time', 'status', 'task')
     print(jid)
-    task = str(task)
 
     if new_status == "in progress":
         print('test2')
-        if task == "jobs":
+        if str(task) == "jobs":
             return_jobs()
-        elif task == "load_data":
+        elif str(task) == "load_data":
             print('test3')
             load_data()
 
