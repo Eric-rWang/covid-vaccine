@@ -26,7 +26,7 @@ def _instantiate_job(jid, time, status, task, pod_ip="not_set"):
     return {'id': jid.decode('utf-8'),
             'time': time.decode('utf-8'),
             'status': status.decode('utf-8'),
-            'task': task.decode('utf-8'),
+            'task': task,
             'pod_ip': pod_ip
     }
 
