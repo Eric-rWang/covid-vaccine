@@ -50,8 +50,9 @@ def add_job(task, time, status="submitted"):
 
 def update_job_status(jid, worker_ip, new_status):
     """Update the status of job with job id `jid` to status `status`."""
-    jid, time, status, str(task) = rd.hmget(_generate_job_key(jid), 'id', 'time', 'status', 'task')
+    jid, time, status, task = rd.hmget(_generate_job_key(jid), 'id', 'time', 'status', 'task')
     print('test1')
+    task = str(task)
 
     if new_status == "in progress":
         print('test2')
