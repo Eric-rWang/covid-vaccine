@@ -56,6 +56,7 @@ def update_job_status(jid, worker_ip, new_status):
         if task == "jobs":
             return_jobs()
         elif task == "load_data":
+            print('test')
             load_data()
 
     job = _instantiate_job(jid, time, status, task, worker_ip)
