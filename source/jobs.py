@@ -51,7 +51,7 @@ def add_job(task, time, status="submitted"):
 def update_job_status(jid, worker_ip, new_status):
     """Update the status of job with job id `jid` to status `status`."""
     jid, time, status, task = rd.hmget(_generate_job_key(jid), 'id', 'time', 'status', 'task')
-    print('test1')
+    print(jid)
     task = str(task)
 
     if new_status == "in progress":
@@ -61,6 +61,8 @@ def update_job_status(jid, worker_ip, new_status):
         elif task == "load_data":
             print('test3')
             load_data()
+
+    print('test4')
 
     job = _instantiate_job(jid, time, status, task, worker_ip)
     if job:
@@ -79,6 +81,7 @@ def return_jobs():
     return jobs
 
 def load_data():
+    print('load_data')
     with open('us_vaccine_data.csv', 'r') as csv_in:
         csv_file = csv.reader(csv_in, delimiter=',')
         data = {"vaccine_data":[]}
