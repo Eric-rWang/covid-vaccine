@@ -67,10 +67,12 @@ def update_job_status(jid, worker_ip, new_status):
 
 def return_jobs():
     keys = rd.keys()
-
+    jobs = []
     for key in keys:
         key = key.decode("utf-8")
-        print(rd.hgetall(key))
+        jobs.append(rd.hgetall(key))
+
+    return jobs
 
 def load_data():
     with open('us_vaccine_data.csv', 'r') as csv_in:
@@ -80,9 +82,9 @@ def load_data():
         
         for line in csv_file:
             data['vaccine_data'].append({
-                'location': line[0],
-                'date': line[1],
-                'vaccinated': line[2]
+                'location': str(line[0]),
+                'date': str(line[1]),
+                'vaccinated': int(line[2])
             })
         
         r2.set('vaccine_data', json.dumps(data, indent = 2))
