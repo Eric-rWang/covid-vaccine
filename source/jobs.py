@@ -1,6 +1,6 @@
 # jobs.py
 
-import uuid, redis, os, csv
+import uuid, json, redis, os, csv
 
 from hotqueue import HotQueue
 
