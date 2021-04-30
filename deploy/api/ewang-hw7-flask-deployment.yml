@@ -23,8 +23,8 @@ spec:
         - name: ewang-hw7-flask
           imagePullPolicy: Always
           image: cobcannon123/covid19_data:latest
-          command: ["python3", "api.py"]
-          #command: ["sleep", "9999999999"]
+          #command: ["python3", "api.py"]
+          command: ["sleep", "9999999999"]
           env:
           - name: FLASK_APP
             value: "api.py"

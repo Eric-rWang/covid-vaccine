@@ -21,8 +21,8 @@ spec:
         - name: ewang-hw7-worker
           imagePullPolicy: Always
           image: cobcannon123/covid19_data:latest
-          command: ["python3", "worker.py"]
-          #command: ["sleep", "9999999999"]
+          #command: ["python3", "worker.py"]
+          command: ["sleep", "9999999999"]
           env:
             - name: WORKER_IP
               valueFrom:
