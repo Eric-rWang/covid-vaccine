@@ -26,7 +26,7 @@ def _instantiate_job(jid, time, status, task, pod_ip="not_set"):
     return {'id': jid.decode('utf-8'),
             'time': time.decode('utf-8'),
             'status': status.decode('utf-8'),
-            'task': task,
+            'task': task.decode('utf-8'),
             'pod_ip': pod_ip
     }
 
@@ -51,13 +51,13 @@ def add_job(task, time, status="submitted"):
 def update_job_status(jid, worker_ip, new_status):
     """Update the status of job with job id `jid` to status `status`."""
     jid, time, status, task = rd.hmget(_generate_job_key(jid), 'id', 'time', 'status', 'task')
-    print(jid)
+    print(task, type(task))
 
     if new_status == "in progress":
         print('test2')
-        if str(task) == "jobs":
+        if task == b'jobs':
             return_jobs()
-        elif str(task) == "load_data":
+        elif task == b'load_data':
             print('test3')
             load_data()
 
