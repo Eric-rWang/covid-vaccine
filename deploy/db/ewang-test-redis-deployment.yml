@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ewang-test-redis-deployment
+  labels:
+    app: ewang-test-redis
+    username: ewang
+    env: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ewang-test-redis
+  template:
+    metadata:
+      labels:
+        app: ewang-test-redis
+        username: ewang
+        env: test
+    spec:
+      containers:
+        - name: hello-redis
+          imagePullPolicy: Always
+          image: redis:5.0.0
+          volumeMounts:
+          - name: ewang-pvc-data
+            mountPath: "/data"
+      volumes:
+      - name: ewang-pvc-data
+        persistentVolumeClaim:
+          claimName: ewang-pvc-data

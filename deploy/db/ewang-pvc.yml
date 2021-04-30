@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ewang-pvc-data
+  labels:
+    username: ewang
+    env: test
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: rbd
+  resources:
+    requests:
+      storage: 1Gi

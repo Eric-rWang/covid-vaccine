@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ewang-hw7-flask-deployment
+  labels:
+    app: ewang-hw7-flask
+    username: ewang
+    env: hw7
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ewang-hw7-flask
+  template:
+    metadata:
+      labels:
+        app: ewang-hw7-flask
+        username: ewang
+        env: hw7
+    spec:
+      containers:
+        - name: ewang-hw7-flask
+          imagePullPolicy: Always
+          image: cobcannon123/ewang-hw7:latest
+          #command: ["python3", "api.py"]
+          command: ["sleep", "9999999999"]
+          env:
+          - name: FLASK_APP
+            value: "api.py"
+          ports:
+          - name: http
+            containerPort: 5000
