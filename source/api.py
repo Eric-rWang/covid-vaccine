@@ -4,7 +4,7 @@ import json, pytz, datetime
 from flask import Flask, request
 import jobs
 
-now_time = datetime.datetime.now(pytz.timezone('US/Central'))
+now_time = str(datetime.datetime.now(pytz.timezone('US/Central')))
 
 app = Flask(__name__)
 
