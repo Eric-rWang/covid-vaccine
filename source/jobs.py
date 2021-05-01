@@ -2,6 +2,8 @@
 
 import uuid, json, redis, os, csv, datetime
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import matplotlib as mpl
 
 from hotqueue import HotQueue
 
@@ -87,7 +89,6 @@ def return_jobs():
     return jobs
 
 def load_data():
-    print('load_data')
     with open('us_vaccine_data.csv', 'r') as csv_in:
         csv_file = csv.reader(csv_in, delimiter=',')
         data = {"vaccine_data":[]}
@@ -114,7 +115,16 @@ def graph_data():
         dates.append(clean_data['vaccine_data'][i]['date'])
         fully_vaccinated.append(clean_data['vaccine_data'][i]['vaccinated'])
 
-    plt.plot(dates, fully_vaccinated)
+    x_values = [datetime.datetime.strptime(d,"%Y-%m-%d").date() for d in dates]
+
+    plt.plot(x_values, fully_vaccinated)
+    plt.xlabel("Date")
+    plt.ylabel("Fully Vaccinated")
+    plt.title("Number of Fully Vaccinated People in the US")
+    plt.ylim(1342086.0, 96747454.0)
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=10))
+    plt.gca().xaxis.set_minor_locator(mdates.DayLocator())
     plt.gcf().autofmt_xdate()
     plt.show()
 
