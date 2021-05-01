@@ -24,6 +24,10 @@ def print_data():
 def load_data_api():
 	return json.dumps(jobs.add_job('load_data', now_time), indent=2) + '\n'
 
+@app.route('/graph_data', methods=['GET'])
+def graph_data():
+	return json.dumps(jobs.add_job('graph_data', now_time), indent=2) + '\n'
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

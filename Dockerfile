@@ -10,5 +10,6 @@ RUN pip3 install hotqueue
 RUN pip3 install flask
 RUN pip3 install redis
 RUN pip3 install pytz
+RUN pip3 install matplotlib
 
 ENTRYPOINT ["python3"]

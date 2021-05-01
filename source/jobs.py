@@ -1,6 +1,7 @@
 # jobs.py
 
-import uuid, json, redis, os, csv
+import uuid, json, redis, os, csv, datetime
+import matplotlib.pyplot as plt
 
 from hotqueue import HotQueue
 
@@ -55,6 +56,8 @@ def update_job_status(jid, worker_ip, new_status):
     if new_status == "in progress":
         if task == b'load_data':
             load_data()
+        if task == b'graph_data':
+            graph_data()
 
     print('test4')
 
@@ -102,12 +105,18 @@ def load_data():
 def view_data():
     return json.loads(r2.get('vaccine_data'))
 
+def graph_data():
+    clean_data = json.loads(r2.get('vaccine_data').decode('utf-8'))
+    dates = []
+    fully_vaccinated = []
 
+    for i in range(len(clean_data['vaccine_data'])):
+        dates.append(clean_data['vaccine_data'][i]['date'])
+        fully_vaccinated.append(clean_data['vaccine_data'][i]['vaccinated'])
 
-
-
-
-
+    plt.plot(dates, fully_vaccinated)
+    plt.gcf().autofmt_xdate()
+    plt.show()
 
 
 
