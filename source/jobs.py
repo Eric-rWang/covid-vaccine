@@ -88,7 +88,7 @@ def return_jobs():
             'time': time.decode('utf-8'),
             'status': status.decode('utf-8'),
             'task': task.decode('utf-8'),
-            'job_input': job_input.decode('utf-8')
+            'job_input': job_input.decode('utf-8'),
             'pod_ip': pod_ip.decode('utf-8')
         })
 

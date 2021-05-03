@@ -25,7 +25,8 @@ def graph_data():
 	return json.dumps(jobs.add_job('graph_data', now_time), indent=2) + '\n'
 
 @app.route('/estimate', methods=['POST'])
-	try:
+def estimate_data():
+    try:
         date = request.get_json(force=True)
     except Exception as e:
         return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
