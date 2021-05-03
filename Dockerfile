@@ -11,5 +11,7 @@ RUN pip3 install flask
 RUN pip3 install redis
 RUN pip3 install pytz
 RUN pip3 install matplotlib
+RUN pip3 install numpy
+RUN pip3 install scipy
 
 ENTRYPOINT ["python3"]

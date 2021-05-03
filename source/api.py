@@ -16,10 +16,6 @@ def jobs_api():
 #        return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
     return json.dumps(jobs.return_jobs(), indent=2) + '\n'
 
-@app.route('/view_data', methods=['GET'])
-def print_data():
-    return json.dumps(jobs.view_data(), indent=2) + '\n'
-
 @app.route('/load_data', methods=['GET'])
 def load_data_api():
 	return json.dumps(jobs.add_job('load_data', now_time), indent=2) + '\n'
@@ -28,6 +24,32 @@ def load_data_api():
 def graph_data():
 	return json.dumps(jobs.add_job('graph_data', now_time), indent=2) + '\n'
 
+@app.route('/estimate', methods=['POST'])
+	try:
+        date = request.get_json(force=True)
+    except Exception as e:
+        return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
+    return json.dumps(jobs.add_job('estimate_vaccinated', now_time, date['date']), indent=2) + '\n'
+
+@app.route('/view_data', methods=['GET'])
+def print_data():
+    return json.dumps(jobs.get_view_data(), indent=2) + '\n'
+
+@app.route('/view_result', methods=['POST'])
+def view_result():
+    try:
+        jid = request.get_json(force=True)
+    except Exception as e:
+        return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
+    return json.dumps(jobs.get_result(jid['jid'])) + '\n'
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+
+
+
+
+
+
+
+
