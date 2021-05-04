@@ -55,8 +55,9 @@ with open('us_vaccine_data.csv', 'r') as csv_in:
 	plt.plot(x_line, y_line, '--', color='green')
 	plt.show()
 
+	dates2 = "2021-05-03"
 	date1 = dates[0].split('-')
-	date2 = dates[99].split('-')
+	date2 = dates2.split('-')
 	f_date = date(int(date1[0]), int(date1[1]), int(date1[2]))
 	l_date = date(int(date2[0]), int(date2[1]), int(date2[2]))
 	delta = l_date - f_date

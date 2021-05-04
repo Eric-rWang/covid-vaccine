@@ -42,7 +42,7 @@ def view_result():
         jid = request.get_json(force=True)
     except Exception as e:
         return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
-    return json.dumps(jobs.get_result(jid['jid'])) + '\n'
+    return json.dumps(jobs.get_result(jid['jid']), indent=2) + '\n'
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

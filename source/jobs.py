@@ -66,6 +66,9 @@ def update_job_status(jid, worker_ip, new_status):
         elif task == b'graph_data':
             graph_data(jid)
         elif task == b'estimate_vaccinated':
+            print(type(job_input))
+            job_input = job_input.decode('utf-8')
+            print(type(job_input))
             estimate_vaccinated(jid, job_input)
 
     job = _instantiate_job(jid, time, status, task, job_input, worker_ip)
@@ -128,9 +131,9 @@ def graph_data(jid):
     plt.show()
 
 # Given a date, estimate the total vaccinated people 
-def estimate_vaccinated(jid, date):
+def estimate_vaccinated(jid, date_input):
 
-    if date != b'none':
+    if date_input != b'none':
         dates, fully_vaccinated = get_data()
         x = list(range(len(dates)))
 
@@ -150,19 +153,20 @@ def estimate_vaccinated(jid, date):
         '''
 
         date1 = dates[0].split('-')
-        date2 = date.split('-')
+        date2 = date_input.split('-')
+
         f_date = date(int(date1[0]), int(date1[1]), int(date1[2]))
         l_date = date(int(date2[0]), int(date2[1]), int(date2[2]))
         delta = l_date - f_date
         #print(delta.days)
 
-        est_vaccinted = objective(delta.days, a, b, c, d)
+        est_vaccinted = round(objective(delta.days, a, b, c, d))
         return_data = {"result":[]}
 
         return_data['result'].append({
                 'jid': str(jid),
                 'location': 'United States',
-                'date': str(date),
+                'date': str(date_input),
                 'fully vaccinated estimate': str(est_vaccinted)
         })
 
@@ -170,6 +174,8 @@ def estimate_vaccinated(jid, date):
 
     else:
         population_us = 328200000
+
+        # calculate herd immunity
 
 
 def objective(x, a, b, c, d):
@@ -192,7 +198,7 @@ def get_result(jid):
     data = {"result":[]}
 
     try: 
-        return json.loads(r3.get(_generate_job_key(jid)))
+        return json.loads(r3.get(jid))
     except Exception as e:
         return "Unable to find job: " + str(jid)
 
