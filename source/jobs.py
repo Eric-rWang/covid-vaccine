@@ -38,26 +38,26 @@ def _instantiate_job(jid, time, status, task, job_input, pod_ip="not_set"):
             'pod_ip': pod_ip
     }
 
+# saves job in redis database
 def _save_job(job_key, job_dict):
-    """Save a job object in the Redis database."""
     rd.hmset(job_key, job_dict)
 
+# adds job to redis queue
 def _queue_job(jid):
-    """Add a job to the redis queue."""
     q.put(jid)
 
+# adds job to redis database
 def add_job(task, time, job_input="none", status="submitted"):
-    """Add a job to the redis queue."""
     jid = _generate_jid()
     job_dict = _instantiate_job(jid, time, status, task, job_input)
-    # update call to save_job:
+
     _save_job(_generate_job_key(jid), job_dict)
-    # update call to queue_job:
+
     _queue_job(jid)
     return job_dict
 
+# update status to job, give it worker_ip
 def update_job_status(jid, worker_ip, new_status):
-    """Update the status of job with job id `jid` to status `status`."""
     jid, time, status, task, job_input = rd.hmget(_generate_job_key(jid), 'id', 'time', 'status', 'task', 'job_input')
 
     if new_status == "in progress":
@@ -78,6 +78,7 @@ def update_job_status(jid, worker_ip, new_status):
     else:
         raise Exception()
 
+# returns all the jobs
 def return_jobs():
     keys = rd.keys()
     jobs = {"jobs":[]}
@@ -97,6 +98,7 @@ def return_jobs():
 
     return jobs
 
+# loads data into redis database
 def load_data():
     with open('us_vaccine_data.csv', 'r') as csv_in:
         csv_file = csv.reader(csv_in, delimiter=',')
@@ -111,6 +113,131 @@ def load_data():
             })
         
         r2.set('vaccine_data', json.dumps(data, indent = 2))
+
+# adds data point to vaccine data
+def add_data(location, date, vaccinated):
+    with open('us_vaccine_data.csv', 'r') as csv_in:
+        csv_file = csv.reader(csv_in, delimiter=',')
+        data = {"vaccine_data":[]}
+        header = next(csv_file, None)
+        
+        for line in csv_file:
+            data['vaccine_data'].append({
+                'location': str(line[0]),
+                'date': str(line[1]),
+                'vaccinated': float(line[2])
+            })
+
+        data['vaccine_data'].append({
+            'location': str(location),
+            'date': str(date),
+            'vaccinated': float(vaccinated)
+        })
+
+        r2.set('vaccine_data', json.dumps(data, indent = 2))
+
+        return_data = {"result":[]}
+
+        return_data['result'].append({
+                'location': str(location),
+                'date': str(date),
+                'fully vaccinated': str(vaccinated),
+                'message' : 'data point added'
+        })
+
+        return return_data
+
+# updates existing point in data
+def update_data(location, date, fully_vaccinated):
+    keys = r2.keys()
+    data = {"vaccine_data":[]}
+    set_data = False
+    for key in keys:
+        key = key.decode("utf-8")
+
+        data_location, data_date, data_vaccinated = r2.hget(key, 'location', 'date', 'vaccinated')
+        data_location = data_location.decode('utf-8')
+        data_date = data_date.decode('utf-8')
+        data_vaccinated = data_vaccinated.decode('utf-8')
+
+        if date == data_date:
+            data['vaccine_data'].append({
+                'location': str(location),
+                'date': str(date),
+                'vaccinated': float(fully_vaccinated)
+            })
+            set_data = True
+        else:
+            data['vaccine_data'].append({
+                'location': str(data_location),
+                'date': str(data_date),
+                'vaccinated': str(data_vaccinated)
+            })
+
+    r2.set('vaccine_data', json.dumps(data, indent = 2))  
+
+    return_data = {"result":[]}
+
+    if set_data:
+        return_data['result'].append({
+                'location': str(location),
+                'date': str(date),
+                'fully vaccinated': str(fully_vaccinated),
+                'message' : 'data point updated'
+        })
+    else:
+        return_data['result'].append({
+                'location': str(location),
+                'date': str(date),
+                'fully vaccinated': str(fully_vaccinated),
+                'message' : 'data point not found, unable to update'
+        })
+
+    return return_data
+
+def delete_data(date):
+    keys = r2.keys()
+    data = {"vaccine_data":[]}
+    del_data = False
+    del_location = ''
+    del_vaccinated = ''
+    for key in keys:
+        key = key.decode("utf-8")
+
+        data_location, data_date, data_vaccinated = r2.hget(key, 'location', 'date', 'vaccinated')
+        data_location = data_location.decode('utf-8')
+        data_date = data_date.decode('utf-8')
+        data_vaccinated = data_vaccinated.decode('utf-8')
+
+        if date == data_date:
+            del_data = True
+            del_location = data_location
+            del_vaccinated = data_vaccinated
+        else:
+            data['vaccine_data'].append({
+                'location': str(data_location),
+                'date': str(data_date),
+                'vaccinated': str(data_vaccinated)
+            })
+
+    r2.set('vaccine_data', json.dumps(data, indent = 2))
+
+    return_data = {"result":[]}
+
+    if del_data:
+        return_data['result'].append({
+                'location': str(del_location),
+                'date': str(date),
+                'fully vaccinated': str(del_vaccinated),
+                'message' : 'data point deleted'
+        })
+    else:
+        return_data['result'].append({
+                'date': str(date),
+                'message' : 'data point not found, unable to delete'
+        })
+
+    return return_data
 
 # Graph the data, save it under r3 with it's jid as the key.
 def graph_data(jid):
@@ -127,8 +254,21 @@ def graph_data(jid):
     plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=10))
     plt.gca().xaxis.set_minor_locator(mdates.DayLocator())
     plt.gcf().autofmt_xdate()
-    #plt.savefig('vaccinated_graph.png')
-    plt.show()
+    plt.savefig('/vaccinated_graph.png')
+    #plt.show()
+
+    with open('/vaccinated_graph.png', 'rb') as f:
+        img = f.read()
+
+    return_data = {"result":[]}
+
+    return_data['result'].append({
+            'jid': str(jid),
+            'image': 'ready',
+            'get image': 'curl the download route'
+    })
+
+    r3.hset(jid, return_data)
 
 # Given a date, estimate the total vaccinated people 
 def estimate_vaccinated(jid, date_input):
