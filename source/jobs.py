@@ -155,7 +155,7 @@ def update_data(location, date, fully_vaccinated):
     for key in keys:
         key = key.decode("utf-8")
 
-        data_location, data_date, data_vaccinated = r2.hget(key, 'location', 'date', 'vaccinated')
+        data_location, data_date, data_vaccinated = r2.hmget(key, 'location', 'date', 'vaccinated')
         data_location = data_location.decode('utf-8')
         data_date = data_date.decode('utf-8')
         data_vaccinated = data_vaccinated.decode('utf-8')
@@ -204,7 +204,7 @@ def delete_data(date):
     for key in keys:
         key = key.decode("utf-8")
 
-        data_location, data_date, data_vaccinated = r2.hget(key, 'location', 'date', 'vaccinated')
+        data_location, data_date, data_vaccinated = r2.hmget(key, 'location', 'date', 'vaccinated')
         data_location = data_location.decode('utf-8')
         data_date = data_date.decode('utf-8')
         data_vaccinated = data_vaccinated.decode('utf-8')
