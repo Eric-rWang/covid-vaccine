@@ -26,7 +26,7 @@ def create_data():
         data = request.get_json(force=True)
     except Exception as e:
         return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
-    return json.dumps(jobs.add_data(data['location'], data['date'], data['fully_vaccinated']), indent=2) + '\n'
+    return json.dumps(jobs.add_data(data['location'], data['date'], data['vaccinated']), indent=2) + '\n'
 
 @app.route('/view_data', methods=['GET'])
 def print_data():
@@ -38,7 +38,7 @@ def change_data():
         data = request.get_json(force=True)
     except Exception as e:
         return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
-    return json.dumps(jobs.update_data(data['location'], data['date'], data['fully_vaccinated']), indent=2) + '\n'
+    return json.dumps(jobs.update_data(data['location'], data['date'], data['vaccinated']), indent=2) + '\n'
 
 @app.route('/delete_data', methods=['POST'])
 def remove_data():
