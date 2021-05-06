@@ -28,7 +28,7 @@ $ curl -X GET <flask_ip>:5000/load_data
 ### CRUD Operations 
 Basic CRUD operations can be performed with the following commands.
 
-Create a data entry
+####Create a data entry
 ```
 $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, "date": <date>, "vaccinated": <vaccinated>}' <flask_ip>:5000/create_data
 {
@@ -43,13 +43,13 @@ $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, 
 } 
 ```
 
-Read data
+####Read data
 ```
 $ curl -X GET <flask_ip>:5000/view_data
 Returns vaccine data stored in the database.
 ```
 
-Update data point
+####Update data point
 ```
 $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, "date": <date>, "vaccinated": <vaccinated>}' <flask_ip>:5000/update_data
 {
@@ -64,7 +64,7 @@ $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, 
 }
 ``` 
 
-Delete data point
+####Delete data point
 ```
 $ curl -X POST -H "content-type: application/json" -d '{"date": <date>}' <flask_ip>:5000/delete_data
 {
@@ -80,7 +80,7 @@ $ curl -X POST -H "content-type: application/json" -d '{"date": <date>}' <flask_
 ```
 
 ### Basic Operations
-Retrieving all jobs
+####Retrieving all jobs
 ```
 $ curl -X GET <flask_ip>:5000/jobs
 # returns all the jobs with job information.
@@ -94,7 +94,7 @@ $ curl -X POST -H "content-type: application/json" -d '{"jid": <jid>}' <flask_ip
 ```
 
 ### Analysis Operations
-Graphing data
+####Graphing data
 ```
 $ curl -X GET <flask_ip>:5000/graph_data
 {
@@ -116,7 +116,7 @@ $ ls
 <jid>.png
 ```
 
-Estimate number of fully vaccinated people
+####Estimate number of fully vaccinated people
 This operation takes the date inputed by the user and using a curve fitted to the data points, it estimates the number of fully vaccinated people.
 ```
 $ curl -X POST -H "content-type: application/json" -d '{"date": <date>}' <flask_ip>:5000/estimate
