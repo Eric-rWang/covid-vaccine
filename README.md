@@ -16,8 +16,8 @@ To do so run the following command.
 ```
 $ curl -X GET <flask_ip>:5000/load_data
 {
-  "id": "0d3bac54-0988-4d61-a1e2-d971e4c282e8",
-  "time": "2021-05-06 10:22:10.991988-05:00",
+  "id": <jid>,
+  "time": <time>,
   "status": "submitted",
   "task": "load_data",
   "job_input": "none",
@@ -79,11 +79,94 @@ $ curl -X POST -H "content-type: application/json" -d '{"date": <date>}' <flask_
 }
 ```
 
+### Basic Operations
+Retrieving all jobs
+```
+$ curl -X GET <flask_ip>:5000/jobs
+# returns all the jobs with job information.
+# use to check status of job.
+```
+
+Once an analysis operation is performed, the result can be obtained by running
+```
+$ curl -X POST -H "content-type: application/json" -d '{"jid": <jid>}' <flask_ip>:5000/view_results
+# will return json of result.
+```
+
 ### Analysis Operations
+Graphing data
+```
+$ curl -X GET <flask_ip>:5000/graph_data
+{
+  "id": <jid>,
+  "time": <time>,
+  "status": "submitted",
+  "task": "graph_data",
+  "job_input": "none",
+  "pod_ip": "not_set"
+}
+```
+To download and view the graph.png
+```
+$ curl -X GET <flask_ip>:5000/download/<jid> > output.png
+% Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 19839    0 19839    0     0   668k      0 --:--:-- --:--:-- --:--:--  668k
+$ ls
+<jid>.png
+```
 
-
+Estimate number of fully vaccinated people
+This operation takes the date inputed by the user and using a curve fitted to the data points, it estimates the number of fully vaccinated people.
+```
+$ curl -X POST -H "content-type: application/json" -d '{"date": <date>}' <flask_ip>:5000/estimate
+{
+  "id": <jid>,
+  "time": <time>,
+  "status": "submitted",
+  "task": "estimate_vaccinated",
+  "job_input": <date>,
+  "pod_ip": "not_set"
+}
+```
+Retrieving the result can be done by curling the view_results route.
+```
+$ curl -X POST -H "content-type: application/json" -d '{"jid": <jid>}' <flask_ip>:5000/view_results
+{
+  "result": [
+    {
+      "jid": <jid>,
+      "location": <location>,
+      "date": <date>,
+      "fully vaccinated estimate": <fully vaccinated estimate>
+    }
+  ]
+}
+```
 
 ## Setup
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
