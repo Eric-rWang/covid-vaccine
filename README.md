@@ -27,7 +27,7 @@ $ curl -X GET <flask_ip>:5000/load_data
 
 Basic CRUD opperations can be performed with the following commands.
 
-### Create a data entry
+#### Create a data entry
 ```
 $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, "date": <date>, "vaccinated": <vaccinated>}' <flask_ip>:5000/create_data
 {
@@ -42,13 +42,13 @@ $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, 
 } 
 ```
 
-### Read the data
+#### Read the data
 ```
 $ curl -X GET <flask_ip>:5000/view_data
 ```
 Returns vaccine data stored in the database.
 
-### Update the data
+#### Update the data
 ```
 $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, "date": <date>, "vaccinated": <vaccinated>}' <flask_ip>:5000/update_data
 {
