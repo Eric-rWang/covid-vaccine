@@ -7,7 +7,7 @@ worker_ip = os.environ.get('WORKER_IP')
 @q.worker
 def execute_job(jid):
     update_job_status(jid, worker_ip, "in progress")
-    time.sleep(15)
-    update_job_status(jid, worker_ip, "complete")
+    # time.sleep(15)
+    # update_job_status(jid, worker_ip, "complete")
 
 execute_job()

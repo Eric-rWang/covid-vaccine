@@ -68,6 +68,13 @@ def view_result():
         return True, json.dumps({'status': "Error", 'message': 'Invalid JSON: {}.'.format(e)})
     return json.dumps(jobs.get_result(jid['jid']), indent=2) + '\n'
 
+@app.route('/download/<jobid>', methods=['GET'])
+def download(jobid):
+    path = f'/app/{jobid}.png'
+    with open(path, 'wb') as f:
+        f.write(r3.hget(jobid, 'image'))
+    return send_file(path, mimetype='image/png', as_attachment=True)
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
 

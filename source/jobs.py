@@ -62,14 +62,15 @@ def update_job_status(jid, worker_ip, new_status):
 
     if new_status == "in progress":
         if task == b'load_data':
-            load_data()
+            job_id = jid.decode('utf-8')
+            new_status = load_data(job_id)
         elif task == b'graph_data':
-            graph_data(jid)
+            job_id = jid.decode('utf-8')
+            new_status = graph_data(job_id)
         elif task == b'estimate_vaccinated':
-            print(type(job_input))
+            job_id = jid.decode('utf-8')
             job_input = job_input.decode('utf-8')
-            print(type(job_input))
-            estimate_vaccinated(jid, job_input)
+            new_status = estimate_vaccinated(job_id, job_input)
 
     job = _instantiate_job(jid, time, status, task, job_input, worker_ip)
     if job:
@@ -99,7 +100,7 @@ def return_jobs():
     return jobs
 
 # loads data into redis database
-def load_data():
+def load_data(jid):
     with open('us_vaccine_data.csv', 'r') as csv_in:
         csv_file = csv.reader(csv_in, delimiter=',')
         data = {"vaccine_data":[]}
@@ -113,6 +114,8 @@ def load_data():
             })
         
         r2.set('vaccine_data', json.dumps(data, indent = 2))
+        # rd.hset(jid, 'status', 'complete')
+        return 'complete'
 
 # adds data point to vaccine data
 def add_data(location, date, vaccinated):
@@ -149,18 +152,12 @@ def add_data(location, date, vaccinated):
 
 # updates existing point in data
 def update_data(location, date, fully_vaccinated):
-    keys = r2.keys()
     data = {"vaccine_data":[]}
     set_data = False
-    for key in keys:
-        key = key.decode("utf-8")
 
-        data_location, data_date, data_vaccinated = r2.hmget(key, 'location', 'date', 'vaccinated')
-        data_location = data_location.decode('utf-8')
-        data_date = data_date.decode('utf-8')
-        data_vaccinated = data_vaccinated.decode('utf-8')
-
-        if date == data_date:
+    data_location, data_date, data_vaccinated = get_data()
+    for i in range(len(data_date)):
+        if date == data_date[i]:
             data['vaccine_data'].append({
                 'location': str(location),
                 'date': str(date),
@@ -169,9 +166,9 @@ def update_data(location, date, fully_vaccinated):
             set_data = True
         else:
             data['vaccine_data'].append({
-                'location': str(data_location),
-                'date': str(data_date),
-                'vaccinated': str(data_vaccinated)
+                'location': str(data_location[i]),
+                'date': str(data_date[i]),
+                'vaccinated': str(data_vaccinated[i])
             })
 
     r2.set('vaccine_data', json.dumps(data, indent = 2))  
@@ -196,28 +193,25 @@ def update_data(location, date, fully_vaccinated):
     return return_data
 
 def delete_data(date):
-    keys = r2.keys()
     data = {"vaccine_data":[]}
     del_data = False
     del_location = ''
     del_vaccinated = ''
-    for key in keys:
-        key = key.decode("utf-8")
 
-        data_location, data_date, data_vaccinated = r2.hmget(key, 'location', 'date', 'vaccinated')
-        data_location = data_location.decode('utf-8')
-        data_date = data_date.decode('utf-8')
-        data_vaccinated = data_vaccinated.decode('utf-8')
+    data_location, data_date, data_vaccinated = get_data()
+    print(type(data_date[0]))
 
-        if date == data_date:
+    for i in range(len(data_date)):
+        print(data_date[i])
+        if date == data_date[i]:
             del_data = True
-            del_location = data_location
-            del_vaccinated = data_vaccinated
+            del_location = data_location[i]
+            del_vaccinated = data_vaccinated[i]
         else:
             data['vaccine_data'].append({
-                'location': str(data_location),
-                'date': str(data_date),
-                'vaccinated': str(data_vaccinated)
+                'location': str(data_location[i]),
+                'date': str(data_date[i]),
+                'vaccinated': str(data_vaccinated[i])
             })
 
     r2.set('vaccine_data', json.dumps(data, indent = 2))
@@ -241,7 +235,7 @@ def delete_data(date):
 
 # Graph the data, save it under r3 with it's jid as the key.
 def graph_data(jid):
-    dates, fully_vaccinated = get_data()
+    location, dates, fully_vaccinated = get_data()
 
     x_values = [datetime.datetime.strptime(d,"%Y-%m-%d").date() for d in dates]
 
@@ -260,6 +254,9 @@ def graph_data(jid):
     with open('/vaccinated_graph.png', 'rb') as f:
         img = f.read()
 
+    r3.hset(jid, 'image', img)
+    # rd.hset(jid, 'status', 'complete')
+    '''
     return_data = {"result":[]}
 
     return_data['result'].append({
@@ -268,13 +265,15 @@ def graph_data(jid):
             'get image': 'curl the download route'
     })
 
-    r3.hset(jid, return_data)
+    r3.set(jid, json.dumps(return_data, indent=2))
+    '''
+    return 'complete, ready to retrieve'
+    
 
 # Given a date, estimate the total vaccinated people 
 def estimate_vaccinated(jid, date_input):
-
     if date_input != b'none':
-        dates, fully_vaccinated = get_data()
+        location, dates, fully_vaccinated = get_data()
         x = list(range(len(dates)))
 
         popt, _ = curve_fit(objective, x, fully_vaccinated)
@@ -311,6 +310,8 @@ def estimate_vaccinated(jid, date_input):
         })
 
         r3.set(jid, json.dumps(return_data, indent = 2))
+        # rd.hset(_generate_job_key(jid), 'status', 'complete')
+        return 'complete'
 
     else:
         population_us = 328200000
@@ -323,14 +324,16 @@ def objective(x, a, b, c, d):
 
 def get_data():
     clean_data = json.loads(r2.get('vaccine_data').decode('utf-8'))
+    location = []
     dates = []
     fully_vaccinated = []
 
     for i in range(len(clean_data['vaccine_data'])):
+        location.append(clean_data['vaccine_data'][i]['location'])
         dates.append(clean_data['vaccine_data'][i]['date'])
         fully_vaccinated.append(clean_data['vaccine_data'][i]['vaccinated'])
 
-    return dates, fully_vaccinated
+    return location, dates, fully_vaccinated
 
 def get_result(jid):
     job_id = _generate_job_key(jid)
