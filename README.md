@@ -25,9 +25,10 @@ $ curl -X GET <flask_ip>:5000/load_data
 }
 ```
 
-Basic CRUD opperations can be performed with the following commands.
+### CRUD Operations 
+Basic CRUD operations can be performed with the following commands.
 
-#### Create a data entry
+Create a data entry
 ```
 $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, "date": <date>, "vaccinated": <vaccinated>}' <flask_ip>:5000/create_data
 {
@@ -42,13 +43,13 @@ $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, 
 } 
 ```
 
-#### Read the data
+Read data
 ```
 $ curl -X GET <flask_ip>:5000/view_data
-```
 Returns vaccine data stored in the database.
+```
 
-#### Update the data
+Update data point
 ```
 $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, "date": <date>, "vaccinated": <vaccinated>}' <flask_ip>:5000/update_data
 {
@@ -62,6 +63,25 @@ $ curl -X POST -H "content-type: application/json" -d '{"location": <location>, 
   ]
 }
 ``` 
+
+Delete data point
+```
+$ curl -X POST -H "content-type: application/json" -d '{"date": <date>}' <flask_ip>:5000/delete_data
+{
+  "result": [
+    {
+      "location": <location>,
+      "date": <date>,
+      "fully vaccinated": <vaccinated>,
+      "message": "data point deleted"
+    }
+  ]
+}
+```
+
+### Analysis Operations
+
+
 
 ## Setup
 
