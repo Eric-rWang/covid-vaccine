@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ewang-pvc-data
+  name: covid-pvc-data
   labels:
     username: ewang
-    env: test
+    env: covid-19
 spec:
   accessModes:
     - ReadWriteOnce

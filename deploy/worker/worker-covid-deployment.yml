@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ewang-hw7-worker
+  name: worker-covid-deployment
   labels:
-    app: ewang-hw7-worker
+    app: worker-covid-deployment
     username: ewang
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ewang-hw7-worker
+      app: worker-covid-deployment
   template:
     metadata:
       labels:
-        app: ewang-hw7-worker
+        app: worker-covid-deployment
         username: ewang
     spec:
       containers:
-        - name: ewang-hw7-worker
+        - name: worker-covid-deployment
           imagePullPolicy: Always
           image: cobcannon123/covid19_data:latest
           command: ["python3", "worker.py"]

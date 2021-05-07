@@ -2,25 +2,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ewang-hw7-flask-deployment
+  name: api-covid-flask-deployment
   labels:
-    app: ewang-hw7-flask
+    app: api-covid-flask
     username: ewang
-    env: hw7
+    env: covid-19
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ewang-hw7-flask
+      app: api-covid-flask
   template:
     metadata:
       labels:
-        app: ewang-hw7-flask
+        app: api-covid-flask
         username: ewang
-        env: hw7
+        env: covid-19
     spec:
       containers:
-        - name: ewang-hw7-flask
+        - name: api-covid-flask
           imagePullPolicy: Always
           image: cobcannon123/covid19_data:latest
           command: ["python3", "api.py"]

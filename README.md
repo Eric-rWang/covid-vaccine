@@ -145,7 +145,7 @@ $ curl -X POST -H "content-type: application/json" -d '{"jid": <jid>}' <flask_ip
 ```
 
 ## Setup
-#### File setup
+#### File Setup
 ```
 .
 |--- deploy
@@ -171,6 +171,29 @@ $ curl -X POST -H "content-type: application/json" -d '{"jid": <jid>}' <flask_ip
 |
 |--- Dockerfile
 |--- README.md
+```
+This app uses Flask to create all the routes to access the data which is stored using Redis database. Docker is used to download all the dependencies for this application and Kubernetes is utilized to containerize the Docker image and maintain the Redis database. 
+
+#### Getting Started
+The first step is to clone this repository.
+```
+$ git clone https://github.com/Eric-rWang/covid-vaccine.git
+```
+Once the repository has been cloned, make sure Kubernetes is installed on the machine. Navigate to the 'deploy' folder, for each of the subfolders (api, db, and worker) use kubectl to begin the Kubernetes deployments and Redis service.
+```
+$ cd api/
+$ kubectl apply -f api-covid-flask-deployment.yml
+deployment.apps/ewang-hw7-flask-deployment created
+```
+```
+$ cd db/
+$ kubectl apply -f db-covid-redis-service.yml
+service/ewang-test-redis-service created
+```
+```
+$ cd worker/
+$ kubectl apply -f worker-covid-deployment.yml
+deployment.apps/ewang-hw7-worker created
 ```
 
 
