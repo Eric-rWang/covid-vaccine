@@ -184,6 +184,10 @@ Once the repository has been cloned, make sure Kubernetes is installed on the ma
 $ cd db/
 $ kubectl apply -f db-covid-pvc.yml
 persistentvolumeclaim/covid-pvc-data created
+$
+$ kubectl apply -f db-covid-redis-deployment.yml
+deployment.apps/db-covid-redis-deployment created
+$
 $ kubectl apply -f db-covid-redis-service.yml
 service/db-covid-redis-service created
 ```
@@ -197,6 +201,7 @@ The IP of the Redis service is "10.111.33.124". With this IP, replace the follow
 * Line 32 in worker-covid-deployment.yml
 * Lines 12, 13, 14, 15 in jobs.py. Replace value inside host = '...' with IP.
 
+Once the revisions have been made then the following commands can be run.
 ```
 $ cd api/
 $ kubectl apply -f api-covid-flask-deployment.yml
@@ -207,8 +212,22 @@ $ cd worker/
 $ kubectl apply -f worker-covid-deployment.yml
 deployment.apps/ewang-hw7-worker created
 ```
+Doing a kubectl get pods should display the deployments up and running. If so the app is up and ready to use!
+```
+$ kubectl get pods -o wide
+NAME                                          READY   STATUS    RESTARTS   AGE     IP              NODE                         NOMINATED NODE   READINESS GATES
+api-covid-flask-deployment-564fdd9b45-t5xlx   1/1     Running   0          2m43s   10.244.10.73    c009.rodeo.tacc.utexas.edu   <none>           <none>
+db-covid-redis-deployment-564fb78bd4-gj9b8    1/1     Running   0          4m46s   10.244.7.181    c05                          <none>           <none>
+worker-covid-deployment-585b5c7d7d-pnhgq      1/1     Running   0          2m6s    10.244.10.74    c009.rodeo.tacc.utexas.edu   <none>           <none>
+```
+As shown above, all the pods are 1/1 and ready to use. Copy the api-covid-flask-deployment pod and take note of the respective IP address (that is used for curling the data).
 
-
+To exec into the a kubernetes pod, run the following.
+```
+$ kubectl exec -it api-covid-flask-deployment-564fdd9b45-t5xlx -- /bin/bash
+```
+When inside the pod, the Flask api routes will be ready to use. These routes are outline in the Functions portion of this ReadME.
+Have fun and hope you find this app interesting!
 
 
 
