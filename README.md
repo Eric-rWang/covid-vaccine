@@ -145,7 +145,33 @@ $ curl -X POST -H "content-type: application/json" -d '{"jid": <jid>}' <flask_ip
 ```
 
 ## Setup
-
+File setup
+```
+.
+|--- deploy
+|      |--- api
+|      |     |--- api-covid-flask-deployment.yml
+|      |
+|      |--- db
+|      |     |--- db-covid-pvc.yml
+|      |     |--- db-covid-redis-deployment.yml
+|      |     |--- db-covid-redis-service.yml
+|      |
+|      |--- worker
+|            |--- worker-covid-deployment.yml
+|      
+|--- source
+|      |--- api.py
+|      |--- jobs.py
+|      |--- worker.py
+|      |--- us_vaccine_data.csv
+|
+|--- US_vaccine_data
+|      |--- ...
+|
+|--- Dockerfile
+|--- README.md
+```
 
 
 
