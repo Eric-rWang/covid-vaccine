@@ -9,10 +9,10 @@ from scipy.optimize import curve_fit
 from datetime import date
 from hotqueue import HotQueue
 
-q = HotQueue("queue", host='10.99.12.229', port=6379, db=1)
-rd = redis.StrictRedis(host='10.99.12.229', port=6379, db=0)
-r2 = redis.StrictRedis(host='10.99.12.229', port=6379, db=2)
-r3 = redis.StrictRedis(host='10.99.12.229', port=6379, db=3)
+q = HotQueue("queue", host='10.111.33.124', port=6379, db=1)
+rd = redis.StrictRedis(host='10.111.33.124', port=6379, db=0)
+r2 = redis.StrictRedis(host='10.111.33.124', port=6379, db=2)
+r3 = redis.StrictRedis(host='10.111.33.124', port=6379, db=3)
 #worker_ip = os.environ.get('WORKER_IP')
 
 def _generate_jid():

@@ -24,7 +24,7 @@ spec:
           imagePullPolicy: Always
           image: redis:5.0.0
           volumeMounts:
-          - name: ewang-pvc-data
+          - name: covid-pvc-data
             mountPath: "/data"
       volumes:
       - name: covid-pvc-data

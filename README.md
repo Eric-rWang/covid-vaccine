@@ -181,14 +181,26 @@ $ git clone https://github.com/Eric-rWang/covid-vaccine.git
 ```
 Once the repository has been cloned, make sure Kubernetes is installed on the machine. Navigate to the 'deploy' folder, for each of the subfolders (api, db, and worker) use kubectl to begin the Kubernetes deployments and Redis service.
 ```
+$ cd db/
+$ kubectl apply -f db-covid-pvc.yml
+persistentvolumeclaim/covid-pvc-data created
+$ kubectl apply -f db-covid-redis-service.yml
+service/db-covid-redis-service created
+```
+Before deploying the worker deployment, the IP of the Redis service is needed.
+```
+$ kubectl get services
+NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+db-covid-redis-service   ClusterIP   10.111.33.124   <none>        6379/TCP   83s
+```
+The IP of the Redis service is "10.111.33.124". With this IP, replace the following lines of code with the new IP.
+* Line 32 in worker-covid-deployment.yml
+* Lines 12, 13, 14, 15 in jobs.py. Replace value inside host = '...' with IP.
+
+```
 $ cd api/
 $ kubectl apply -f api-covid-flask-deployment.yml
-deployment.apps/ewang-hw7-flask-deployment created
-```
-```
-$ cd db/
-$ kubectl apply -f db-covid-redis-service.yml
-service/ewang-test-redis-service created
+deployment.apps/api-covid-flask-deployment created
 ```
 ```
 $ cd worker/
