@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ewang-test-redis-deployment
+  name: db-covid-redis-deployment
   labels:
     app: db-covid-19-redis
     username: ewang
